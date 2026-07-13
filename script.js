@@ -154,4 +154,41 @@
     }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
     sections.forEach(function (s) { observer.observe(s); });
   }
+  /* ——— Scroll-reveal (staggered) ——— */
+  (function initReveal() {
+    var reduce = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Index the sidebar children for a staggered load-in */
+    var bioKids = document.querySelectorAll('.bio > *');
+    bioKids.forEach(function (el, i) { el.style.setProperty('--bio-i', i); });
+
+    /* Elements that fade/slide in as they enter the viewport */
+    var targets = Array.prototype.slice.call(document.querySelectorAll(
+      '.about > p, .section, .xp, .pub-intro, .pub-year, .pub, ' +
+      '.featured-card, .edu'
+    ));
+    if (!targets.length) return;
+
+    if (reduce || !('IntersectionObserver' in window)) {
+      targets.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    targets.forEach(function (el) { el.classList.add('reveal'); });
+
+    var revealObserver = new IntersectionObserver(function (entries, obs) {
+      /* Stagger items that become visible in the same frame */
+      var batch = entries.filter(function (e) { return e.isIntersecting; });
+      batch.forEach(function (entry, i) {
+        var el = entry.target;
+        el.style.setProperty('--reveal-delay', (i * 60) + 'ms');
+        el.classList.add('is-visible');
+        obs.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+    targets.forEach(function (el) { revealObserver.observe(el); });
+  })();
+
 })();

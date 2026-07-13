@@ -265,7 +265,6 @@ h2.section {
 }
 .xp-org {
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 14.5px;
   color: var(--ink-soft);
   margin: 2px 0 0;
@@ -543,6 +542,60 @@ h2.section {
   .xp-head, .edu-head { flex-direction: column; gap: 4px; }
 }
 
+/* ——— Scroll-reveal animations ——— */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Gentle entrance for the sidebar on load */
+@keyframes bio-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.bio > * {
+  animation: bio-in 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--bio-i, 0) * 70ms + 80ms);
+}
+
+/* Underline sweep on nav + inline links */
+nav.side a,
+.content a:not(.featured-card):not(.cite-btn):not(.copy-btn) {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.35s var(--ease-out);
+}
+nav.side a:hover,
+.content a:not(.featured-card):not(.cite-btn):not(.copy-btn):hover {
+  text-decoration: none;
+  background-size: 100% 1px;
+}
+
+/* Lift experience / education cards on hover */
+.xp, .edu {
+  transition:
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out);
+}
+.xp:hover, .edu:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px -18px rgba(17, 17, 17, 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .bio > * { animation: none; }
+  .xp:hover, .edu:hover { transform: none; box-shadow: none; }
 }
